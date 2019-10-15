@@ -3,28 +3,27 @@
 
 extern char DTD_DATA_begin;
 extern char DTD_DATA_end;
-extern char DTD_DATA_len;
+extern size_t DTD_DATA_len;
 
 
 int main(int argc, char *argv[])
 {
+	char *p = &DTD_DATA_begin;
 
-	char*  p = &DTD_DATA_begin;
-	char *q = &DTD_DATA_end;
-
-	FILE *f = fopen("f.txt", "wb");
-	while ( p != q ) {
-		fputc(*p, f);
-		putchar(*p++);
+	size_t len = *(&DTD_DATA_len);
+	printf("len: %d\n", len);
+	printf("len2: %d\n", &DTD_DATA_end - &DTD_DATA_begin);
+	FILE *f = fmemopen(p, len, "r");
+	if (f == NULL) {
+		perror("open");
+		return -1;
 	}
+
+	char c;
+	while((c = fgetc(f)) != feof(f))
+		printf("%c", c);
+
 	fclose(f);
-	/* for (int i = 0; i < DTD_DATA_len; i++) { */
-	/*	 putchar(*p++); */
-	/* } */
-
-	int *l = &DTD_DATA_len;
-
-	printf("\n len: %d\n", *l);
 
 	return 0;
 }
